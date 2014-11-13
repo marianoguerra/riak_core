@@ -728,9 +728,7 @@ set_node_handoff_limit(Node, Limit) ->
     ok.
 
 print_handoff_limit(Status) ->
-    Output = riak_core_console_writer:write(Status),
-    io:format("~s", [Output]),
-    ok.
+    riak_core_console_manager:write_status(Status).
 
 %%%===================================================================
 %%% Tests

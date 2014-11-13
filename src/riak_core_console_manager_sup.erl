@@ -12,4 +12,8 @@ start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 init([]) ->
-    {ok, {{one_for_one, 5, 10}, [?CHILD(riak_core_console_manager, worker)]}}.
+    %% We want to take down the node if the process gets killed. The process
+    %% does nothing besides create ets tables and register cuttlefish schemas.
+    %% If we lose the tables we lose cli access. Therefore
+    %% riak_core_console_manager should do no work outside of init/1.
+    {ok, {{one_for_one, 0, 10}, [?CHILD(riak_core_console_manager, worker)]}}.
