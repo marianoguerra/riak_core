@@ -18,7 +18,8 @@
                   basho_stats,
                   eleveldb,
                   pbkdf2,
-                  poolboy
+                  poolboy,
+                  riak_cli
                  ]},
   {mod, {riak_core_app, []}},
   {env, [

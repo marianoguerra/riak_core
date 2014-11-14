@@ -649,7 +649,7 @@ register_cli_commands() ->
     Keys = [],
     Flags = all_cli_flags(),
     Fun = fun show_handoff_limit/2,
-    riak_core_console_manager:register_command(Cmd, Description, Keys, Flags,
+    riak_cli_manager:register_command(Cmd, Description, Keys, Flags,
         Fun).
 
 
@@ -657,7 +657,7 @@ register_cli_commands() ->
 register_cli_config() ->
     Key = ["transfer_limit"],
     Callback = fun set_transfer_limit/3,
-    riak_core_console_manager:register_config(Key, Callback).
+    riak_cli_manager:register_config(Key, Callback).
 
 show_handoff_limit([], Flags) ->
     Node0 = lists:keyfind(node, 1, Flags),
@@ -689,7 +689,7 @@ show_rpc_handoff_limit(Node) ->
     Status = riak_core_status:rpc_transfer_limit(Node),
     print_handoff_limit(Status).
 
-%% This function should only be called by riak_core_console_manager callbacks
+%% This function should only be called by riak_cli_console_manager callbacks
 set_transfer_limit(["transfer_limit"], LimitStr, Flags) ->
     Limit = list_to_integer(LimitStr),
     F = fun lists:keyfind/3,
@@ -728,7 +728,7 @@ set_node_handoff_limit(Node, Limit) ->
     ok.
 
 print_handoff_limit(Status) ->
-    riak_core_console_manager:write_status(Status).
+    riak_cli_manager:write_status(Status).
 
 %%%===================================================================
 %%% Tests

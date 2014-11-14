@@ -29,24 +29,7 @@
 	 rpc_transfer_limit/1,
          ring_status/0]).
 
-%% Status writer API
--export([parse/3]).
-
--include("riak_core_status_types.hrl").
-
--spec parse(status(), fun(), Acc0 :: term()) -> term().
-parse([], Fun, Acc) ->
-    Fun(done, Acc);
-%% Alert is currently the only non-leaf element
-parse([{alert, Elem} | T], Fun, Acc) ->
-    Acc1 = Fun(alert, Acc),
-    Acc2 = parse(Elem, Fun, Acc1),
-    Acc3 = Fun(alert_done, Acc2),
-    parse(T, Fun, Acc3);
-%% Leaf elements
-parse([Elem | T], Fun, Acc) ->
-    Acc1 = Fun(Elem, Acc),
-    parse(T, Fun, Acc1).
+-type status() :: riak_cli_status:status().
 
 -spec(ringready() -> {ok, [atom()]} | {error, any()}).
 ringready() ->
@@ -74,17 +57,17 @@ transfer_limit() ->
 transfer_limit(Node) ->
     case riak_core_handoff_manager:get_concurrency(Node) of
         undefined ->
-            [{alert, [{text, io_lib:format("Invalid/unknown node '~s'.", [Node])}]}];
+            Text = io_lib:format("Invalid/unknown node '~s'.", [Node]),
+            [riak_cli_status:alert([riak_cli_status:text(Text)])];
         Limit ->
             transfer_limit_status([{Node, Limit}])
     end.
 
 -spec transfer_limit_status([{node(), non_neg_integer()}]) -> status().
 transfer_limit_status(Limits0) ->
-    Schema = [node, limit],
     Limits = lists:keysort(1, Limits0),
-    Rows = [[Node, Limit] || {Node, Limit} <- Limits],
-    [{table, Schema, Rows}].
+    Rows = [[{node, Node}, {limit, Limit}] || {Node, Limit} <- Limits],
+    [riak_cli_status:table(Rows)].
 
 -spec rpc_transfer_limit() -> status().
 rpc_transfer_limit() ->
@@ -106,14 +89,14 @@ rpc_transfer_limit(Node) ->
 -spec rpc_transfer_limit_status([{node(), non_neg_integer()}], [node()]) ->
     status().
 rpc_transfer_limit_status(Limits, Down) ->
-    Schema = [node, limit],
-    Rows = [[Node, Limit] || {Node, Limit} <- Limits],
-    Table = {table, Schema, Rows},
-    case Down of 
+    Rows = [[{node, Node}, {limit, Limit}] || {Node, Limit} <- Limits],
+    Table = riak_cli_status:table(Rows),
+    case Down of
 	[] ->
 	    [Table];
 	_ ->
-	    NodesDown = {alert, [{column, "(offline)", Down}]},
+            Column = riak_cli_status:column("(offline)", Down),
+	    NodesDown = riak_cli_status:alert([Column]),
 	    [Table, NodesDown]
     end.
 
