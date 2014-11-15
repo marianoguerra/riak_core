@@ -83,6 +83,7 @@ init([]) ->
     Limit = get_configured_concurrency(),
     register_cli_commands(),
     register_cli_config(),
+    register_usage(),
     {ok, _} = timer:apply_after(1, ?MODULE, set_concurrency, [Limit]),
     {ok, #state{excl=sets:new(), handoffs=[]}}.
 
@@ -642,6 +643,32 @@ all_cli_flags() ->
                         "in the cluster instead of using cluster metadata"++
                         "WARNING: This may be an expensive operation"}]}].
 
+handoff_usage() ->
+    ["riak-admin handoff <sub-command>\n\n",
+     "  View handoff related status\n\n",
+     "  Sub-commands:\n",
+     "    limit      Show transfer limit\n\n"
+    ].
+
+handoff_limit_usage() ->
+    ["riak-admin handoff limit [[--node | -n] <Node>] [--force-rpc | -f]\n\n",
+     "  Show the handoff concurrency limits (transfer_limit) on all nodes.\n\n",
+     "Options\n\n",
+     "  -n <Node>, --node <Node>\n",
+     "      Show the handoff limit for the given node only\n\n",
+     "  -f, --force-rpc\n",
+     "      Retrieve the latest value from a given node or nodes via rpc\n",
+     "      instead of using cluster metadata which may not have propogated\n",
+     "      to the local node yet. WARNING: The use of this flag is not\n",
+     "      recommended as it spams the cluster with messages instead of\n",
+     "      just talking to the local node.\n\n"
+     ].
+
+register_usage() ->
+    riak_cli:register_usage(["riak-admin", "handoff"], handoff_usage()),
+    riak_cli:register_usage(["riak-admin", "handoff", "limit"],
+                            handoff_limit_usage()).
+
 register_cli_commands() ->
     Cmd = ["riak-admin", "handoff", "limit"],
     Description = "Show the number of concurrent transfers allowed",
@@ -649,7 +676,7 @@ register_cli_commands() ->
     Keys = [],
     Flags = all_cli_flags(),
     Fun = fun show_handoff_limit/2,
-    riak_cli_manager:register_command(Cmd, Description, Keys, Flags,
+    riak_cli:register_command(Cmd, Description, Keys, Flags,
         Fun).
 
 
@@ -657,7 +684,7 @@ register_cli_commands() ->
 register_cli_config() ->
     Key = ["transfer_limit"],
     Callback = fun set_transfer_limit/3,
-    riak_cli_manager:register_config(Key, Callback).
+    riak_cli:register_config(Key, Callback).
 
 show_handoff_limit([], Flags) ->
     Node0 = lists:keyfind(node, 1, Flags),
@@ -728,7 +755,7 @@ set_node_handoff_limit(Node, Limit) ->
     ok.
 
 print_handoff_limit(Status) ->
-    riak_cli_manager:write_status(Status).
+    riak_cli:print(Status).
 
 %%%===================================================================
 %%% Tests
