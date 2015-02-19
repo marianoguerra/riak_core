@@ -248,7 +248,10 @@ security_test_() ->
                              ?assertEqual(ok, riak_core_security:add_source([<<"sysadmin">>], {{127, 0, 0, 1}, 32}, password, [])),
                              {ok, Ctx} = riak_core_security:authenticate(<<"sysadmin">>, <<"password">>,
                                                                          [{ip, {127, 0, 0, 1}}]),
-                             ?assertMatch({false, _}, riak_core_security:check_permissions({"riak_kv.get", any}, Ctx)),
+                             Result = riak_core_security:check_permissions({"riak_kv.get", any}, Ctx),
+                             ?assertMatch({false, _, _}, Result),
+                             {false, ErrorMsg, _} = Result,
+                             ?assertMatch(<<"Permission denied: User 'sysadmin' does not have 'riak_kv.get' on *">>, ErrorMsg),
                              ok
                      end}}]}.
 
