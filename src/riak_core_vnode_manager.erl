@@ -35,6 +35,8 @@
 %% Field debugging
 -export([get_tab/0]).
 
+-include("riak_core_compat.hrl").
+
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
 -endif.
@@ -60,8 +62,8 @@
 -type repairs() :: [repair()].
 
 -record(state, {idxtab,
-                forwarding :: dict(),
-                handoff :: dict(),
+                forwarding :: ?DICT_TYPE,
+                handoff :: ?DICT_TYPE,
                 known_modules :: [term()],
                 never_started :: [{integer(), term()}],
                 vnode_start_tokens :: integer(),

@@ -1,0 +1,12 @@
+-ifdef(namespaced_types).
+    -define(SET_TYPE, set:set()).
+    -define(DICT_TYPE, dict:dict()).
+    -define(GB_SET_TYPE, gb_set:gb_set()).
+    -define(ARRAY_TYPE, array:array()).
+-else.
+    -define(SET_TYPE, set()).
+    -define(DICT_TYPE, dict()).
+    -define(GB_SET_TYPE, gb_set()).
+    -define(ARRAY_TYPE, array()).
+-endif.
+
