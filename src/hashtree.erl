@@ -173,19 +173,21 @@
 
 -type select_fun(T) :: fun((orddict()) -> T).
 
+-include("riak_core_compat.hrl").
+
 -record(state, {id             :: tree_id_bin(),
                 index          :: index(),
                 levels         :: pos_integer(),
                 segments       :: pos_integer(),
                 width          :: pos_integer(),
                 mem_levels     :: integer(),
-                tree           :: dict(),
+                tree           :: ?DICT_TYPE,
                 ref            :: term(),
                 path           :: string(),
                 itr            :: term(),
                 write_buffer   :: [{put, binary(), binary()} | {delete, binary()}],
                 write_buffer_count :: integer(),
-                dirty_segments :: array()
+                dirty_segments :: ?ARRAY_TYPE
                }).
 
 -record(itr_state, {itr                :: term(),
@@ -956,17 +958,17 @@ orddict_delta(D1, [], Acc) ->
 %%%===================================================================
 -define(W, 27).
 
--spec bitarray_new(integer()) -> array().
+-spec bitarray_new(integer()) -> ?ARRAY_TYPE.
 bitarray_new(N) -> array:new((N-1) div ?W + 1, {default, 0}).
 
--spec bitarray_set(integer(), array()) -> array().
+-spec bitarray_set(integer(), ?ARRAY_TYPE) -> ?ARRAY_TYPE.
 bitarray_set(I, A) ->
     AI = I div ?W,
     V = array:get(AI, A),
     V1 = V bor (1 bsl (I rem ?W)),
     array:set(AI, V1, A).
 
--spec bitarray_to_list(array()) -> [integer()].
+-spec bitarray_to_list(?ARRAY_TYPE) -> [integer()].
 bitarray_to_list(A) ->
     lists:reverse(
       array:sparse_foldl(fun(I, V, Acc) ->

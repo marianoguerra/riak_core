@@ -119,6 +119,8 @@
 
 -export_type([tree/0, tree_node/0, handler_fun/1, remote_fun/0]).
 
+-include("riak_core_compat.hrl").
+
 -record(hashtree_tree, {
           %% the identifier for this tree. used as part of the ids
           %% passed to hashtree.erl and in keys used to store nodes in
@@ -138,7 +140,7 @@
           snapshot   :: ets:tab(),
 
           %% set of dirty leaves
-          dirty      :: gb_set()
+          dirty      :: ?GB_SET_TYPE
          }).
 
 -define(ROOT, '$ht_root').

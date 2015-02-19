@@ -5,6 +5,12 @@
 -define(PT_MSG_CONFIGURE, 4).
 -define(PT_MSG_BATCH, 5).
 
+-ifdef(namespaced_types).
+    -define(_DICT_TYPE, dict:dict()).
+-else.
+    -define(_DICT_TYPE, dict()).
+-endif.
+
 -record(ho_stats,
         {
           interval_end          :: erlang:timestamp(),
@@ -30,7 +36,7 @@
           transport_mon         :: reference(),
           timestamp             :: tuple(),
           status                :: any(),
-          stats                 :: dict(),
+          stats                 :: ?_DICT_TYPE,
           vnode_pid             :: pid() | undefined,
           vnode_mon             :: reference(),
           type                  :: ho_type(),

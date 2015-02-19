@@ -33,6 +33,8 @@
 -export([init/1, handle_call/3, handle_info/2, terminate/2, code_change/3]).
 -export([handle_cast/2]).
 
+-include("riak_core_compat.hrl").
+
 %%--------------------------------------------------------------------------
 
 -export_type([child_spec/0, startchild_ret/0, strategy/0]).
@@ -80,7 +82,7 @@
 -record(state, {name,
 		strategy               :: strategy(),
 		children = []          :: [child_rec()],
-		dynamics               :: ?DICT() | ?SET(),
+		dynamics               :: ?DICT_TYPE | ?SET_TYPE,
 		intensity              :: non_neg_integer(),
 		period                 :: pos_integer(),
 		restarts = [],
