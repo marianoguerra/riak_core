@@ -241,7 +241,15 @@ security_test_() ->
                              ?assertEqual(ok, riak_core_security:add_user(<<"fred">>, [])),
                              ?assertMatch({error, {unknown_role, _}}, riak_core_security:print_grants(<<"group/fred">>)),
                              ok
-                     end}}
-    ]}.
+                     end}},
+     {timeout, 60, { "Issue 706, error formatted correctly for unauthorized and bucket any",
+                     fun() ->
+                             ?assertEqual(ok, riak_core_security:add_user(<<"sysadmin">>, [{"password", "password"}])),
+                             ?assertEqual(ok, riak_core_security:add_source([<<"sysadmin">>], {{127, 0, 0, 1}, 32}, password, [])),
+                             {ok, Ctx} = riak_core_security:authenticate(<<"sysadmin">>, <<"password">>,
+                                                                         [{ip, {127, 0, 0, 1}}]),
+                             ?assertMatch({false, _}, riak_core_security:check_permissions({"riak_kv.get", any}, Ctx)),
+                             ok
+                     end}}]}.
 
 -endif.
