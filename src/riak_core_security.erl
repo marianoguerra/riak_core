@@ -29,7 +29,7 @@
 %% API
 -export([authenticate/3, add_user/2, alter_user/2, del_user/1,
          add_group/2, alter_group/2, del_group/1,
-         add_source/4, del_source/2,
+         add_source/4, del_source/2, get_context/1,
          add_grant/3, add_revoke/3, check_permission/2, check_permissions/2,
          get_username/1, is_enabled/0, enable/0, disable/0, status/0,
          get_ciphers/0, set_ciphers/1, print_ciphers/0]).
