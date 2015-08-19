@@ -1328,6 +1328,7 @@ bucket2bin({Type, Bucket}) ->
 bucket2bin(Name) ->
     unicode:characters_to_binary(Name, utf8, utf8).
 
+bucket2iolist(any) -> <<"*">>;
 bucket2iolist({Type, Bucket}) ->
     [unicode:characters_to_binary(Type, utf8, utf8), "/",
      unicode:characters_to_binary(Bucket, utf8, utf8)];
