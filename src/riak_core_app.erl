@@ -39,7 +39,6 @@ start(_StartType, _StartArgs) ->
     maybe_delay_start(),
     ok = validate_ring_state_directory_exists(),
     ok = safe_register_cluster_info(),
-    ok = add_bucket_defaults(),
 
     start_riak_core_sup().
 
@@ -75,12 +74,6 @@ safe_register_cluster_info() ->
     catch cluster_info:register_app(riak_core_cinfo_core),
     ok.
 
-add_bucket_defaults() ->
-    %% add these defaults now to supplement the set that may have been
-    %% configured in app.config
-    riak_core_bucket:append_bucket_defaults(riak_core_bucket_type:defaults(default_type)),
-    ok.
-
 start_riak_core_sup() ->
     %% Spin up the supervisor; prune ring files as necessary
     case riak_core_sup:start_link() of
@@ -102,9 +95,7 @@ start_riak_core_sup() ->
 register_applications() ->
     riak_core:register(riak_core, [{stat_mod, riak_core_stat},
                                    {permissions, [get_bucket,
-                                                  set_bucket,
-                                                  get_bucket_type,
-                                                  set_bucket_type]}]),
+                                                  set_bucket]}]),
     ok.
 
 add_ring_event_handler() ->
@@ -132,12 +123,6 @@ register_capabilities() ->
                     [{riak_core, fold_req_version},
                      [v2, v1],
                      v1],
-                    [{riak_core, security},
-                     [true, false],
-                     false],
-                    [{riak_core, bucket_types},
-                     [true, false],
-                     false],
                     [{riak_core, net_ticktime},
                      [true, false],
                      false]],
