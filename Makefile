@@ -7,10 +7,10 @@ PULSE_TESTS = worker_pool_pulse
 all: compile
 
 compile: deps
-	./rebar3 compile
+	rebar3 compile
 
 clean:
-	./rebar3 clean
+	rebar3 clean
 
 distclean: clean
 
