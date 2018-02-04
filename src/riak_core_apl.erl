@@ -52,6 +52,7 @@
 -type chashbin() :: term().
 -type docidx() :: chash:index().
 
+-type bucket_type() :: binary().
 -type bucket() :: binary() | {bucket_type(), binary()}.
 
 %% @doc Return preflist of all active primary nodes (with no
@@ -110,10 +111,10 @@ get_apl_ann(DocIdx, N, Ring, UpNodes) ->
 %%      and annotate each node with type of primary/fallback.
 -spec get_apl_ann(bucket(), [node()]) -> preflist_ann().
 get_apl_ann({Bucket, Key}, UpNodes) ->
-    get_apl_ann({Bucket, Key}, UpNodes, 3).
+    get_apl_ann_n({Bucket, Key}, UpNodes, 3).
 
--spec get_apl_ann(bucket(), [node()], pos_integer()) -> preflist_ann().
-get_apl_ann({Bucket, Key}, UpNodes, NVal) ->
+-spec get_apl_ann_n(bucket(), [node()], pos_integer()) -> preflist_ann().
+get_apl_ann_n({Bucket, Key}, UpNodes, NVal) ->
     DocIdx = riak_core_util:chash_key({Bucket, Key}),
     get_apl_ann(DocIdx, NVal, UpNodes).
 

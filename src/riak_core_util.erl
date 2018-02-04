@@ -267,7 +267,7 @@ mkclientid(RemoteNode) ->
 
 %% @spec chash_key(BKey :: riak_object:bkey()) -> chash:index()
 %% @doc Create a binary used for determining replica placement.
-chash_key({Bucket,_Key}=BKey) ->
+chash_key(BKey) ->
     BucketProps = [{chash_keyfun, {riak_core_util, chash_std_keyfun}}],
     chash_key(BKey, BucketProps).
 
@@ -947,7 +947,7 @@ determine_max_n(Ring) ->
 -spec determine_all_n(riak_core_ring()) -> [pos_integer(),...].
 determine_all_n(Ring) ->
     Buckets = riak_core_ring:get_buckets(Ring),
-    BucketProps = [[{n_val, 3}] || Bucket <- Buckets],
+    BucketProps = [[{n_val, 3}] || _Bucket <- Buckets],
     Default = app_helper:get_env(riak_core, default_bucket_props),
     DefaultN = proplists:get_value(n_val, Default),
     AllN = lists:foldl(fun(Props, AllN) ->
