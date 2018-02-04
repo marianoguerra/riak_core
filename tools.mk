@@ -1,4 +1,4 @@
-REBAR ?= ./rebar3
+REBAR ?= rebar3
 
 .PHONY: compile-no-deps test docs xref dialyzer-run dialyzer-quick dialyzer \
 		cleanplt
