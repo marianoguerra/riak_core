@@ -71,7 +71,6 @@
          get_raw_ring_chashbin/0,
          get_chash_bin/0,
          get_ring_id/0,
-         get_bucket_meta/1,
          refresh_my_ring/0,
          refresh_ring/2,
          set_my_ring/1,
@@ -179,25 +178,6 @@ get_ring_id() ->
             Id;
         _ ->
             {0,0}
-    end.
-
-%% @doc Return metadata for the given bucket. If a bucket
-%% for the non-default type is provided {error, no_type}
-%% is returned when the type does not exist
-get_bucket_meta({<<"default">>, Name}) ->
-    get_bucket_meta(Name);
-get_bucket_meta({_Type, _Name}=Bucket) ->
-    %% reads from cluster metadata ets table
-    %% these aren't stored in ring manager ever
-    riak_core_bucket:get_bucket(Bucket);
-get_bucket_meta(Bucket) ->
-    case ets:lookup(?ETS, {bucket, Bucket}) of
-        [] ->
-            undefined;
-        [{_, undefined}] ->
-            undefined;
-        [{_, Meta}] ->
-            {ok, Meta}
     end.
 
 %% @doc Return the {@link chashbin} generated from the current ring
@@ -572,16 +552,8 @@ set_ring_global(Ring) ->
             Buckets = riak_core_ring:get_buckets(Ring),
             lists:foldl(
                 fun(Bucket, AccRing) ->
-                        BucketProps = riak_core_bucket:get_bucket(Bucket, Ring),
-                        %% Merge anything in the default properties but not in
-                        %% the bucket's properties. This is to ensure default
-                        %% properties added after the bucket is created are
-                        %% inherited to the bucket.
-                        MergedProps = riak_core_bucket:merge_props(
-                            BucketProps, DefaultProps),
-
                         %% fixup the ring
-                        NewBucketProps = run_fixups(Fixups, Bucket, MergedProps),
+                        NewBucketProps = run_fixups(Fixups, Bucket, DefaultProps),
                         %% update the bucket in the ring
                         riak_core_ring:update_meta({bucket,Bucket},
                             NewBucketProps,

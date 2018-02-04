@@ -268,7 +268,7 @@ mkclientid(RemoteNode) ->
 %% @spec chash_key(BKey :: riak_object:bkey()) -> chash:index()
 %% @doc Create a binary used for determining replica placement.
 chash_key({Bucket,_Key}=BKey) ->
-    BucketProps = riak_core_bucket:get_bucket(Bucket),
+    BucketProps = [{chash_keyfun, {riak_core_util, chash_std_keyfun}}],
     chash_key(BKey, BucketProps).
 
 %% @spec chash_key(BKey :: riak_object:bkey(), [{atom(), any()}]) ->
@@ -881,8 +881,10 @@ report_job_request_disposition(false, Class, Mod, Func, Line, Client) ->
 %% @doc Given a bucket/key, determine the associated preflist index_n.
 -spec get_index_n({binary(), binary()}) -> index_n().
 get_index_n({Bucket, Key}) ->
-    BucketProps = riak_core_bucket:get_bucket(Bucket),
-    N = proplists:get_value(n_val, BucketProps),
+    get_index_n({Bucket, Key}, 3).
+
+-spec get_index_n({binary(), binary()}, pos_integer()) -> index_n().
+get_index_n({Bucket, Key}, N) ->
     ChashKey = riak_core_util:chash_key({Bucket, Key}),
     {ok, CHBin} = riak_core_ring_manager:get_chash_bin(),
     Index = chashbin:responsible_index(ChashKey, CHBin),
@@ -945,7 +947,7 @@ determine_max_n(Ring) ->
 -spec determine_all_n(riak_core_ring()) -> [pos_integer(),...].
 determine_all_n(Ring) ->
     Buckets = riak_core_ring:get_buckets(Ring),
-    BucketProps = [riak_core_bucket:get_bucket(Bucket, Ring) || Bucket <- Buckets],
+    BucketProps = [[{n_val, 3}] || Bucket <- Buckets],
     Default = app_helper:get_env(riak_core, default_bucket_props),
     DefaultN = proplists:get_value(n_val, Default),
     AllN = lists:foldl(fun(Props, AllN) ->

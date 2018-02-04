@@ -52,6 +52,8 @@
 -type chashbin() :: term().
 -type docidx() :: chash:index().
 
+-type bucket() :: binary() | {bucket_type(), binary()}.
+
 %% @doc Return preflist of all active primary nodes (with no
 %%      substituion of fallbacks).  Used to simulate a
 %%      preflist with N=ring_size.
@@ -106,17 +108,19 @@ get_apl_ann(DocIdx, N, Ring, UpNodes) ->
 
 %% @doc Get the active preflist for a given {bucket, key} and list of nodes
 %%      and annotate each node with type of primary/fallback.
--spec get_apl_ann(riak_core_bucket:bucket(), [node()]) -> preflist_ann().
+-spec get_apl_ann(bucket(), [node()]) -> preflist_ann().
 get_apl_ann({Bucket, Key}, UpNodes) ->
-    BucketProps = riak_core_bucket:get_bucket(Bucket),
-    NVal = proplists:get_value(n_val, BucketProps),
+    get_apl_ann({Bucket, Key}, UpNodes, 3).
+
+-spec get_apl_ann(bucket(), [node()], pos_integer()) -> preflist_ann().
+get_apl_ann({Bucket, Key}, UpNodes, NVal) ->
     DocIdx = riak_core_util:chash_key({Bucket, Key}),
     get_apl_ann(DocIdx, NVal, UpNodes).
 
 %% @doc Get the active preflist taking account of which nodes are up
 %%      for a given {bucket, key} and annotate each node with type of
 %%      primary/fallback
--spec get_apl_ann_with_pnum(riak_core_bucket:bucket()) -> preflist_with_pnum_ann().
+-spec get_apl_ann_with_pnum(bucket()) -> preflist_with_pnum_ann().
 get_apl_ann_with_pnum(BKey) ->
     {ok, Ring} = riak_core_ring_manager:get_my_ring(),
     UpNodes = riak_core_ring:all_members(Ring),
