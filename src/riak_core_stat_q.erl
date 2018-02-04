@@ -18,7 +18,7 @@
 %%
 %% -------------------------------------------------------------------
 
-%% @doc riak_core_stat_q is an interface to query folsom stats
+%% @doc riak_core_stat_q is an interface to query stats
 %%      To use, call `get_stats/1' with a query `Path'.
 %%      A `Path' is a list of atoms | binaries. The module creates a set
 %%      of `ets:select/1' guards, one for each element in `Path'
