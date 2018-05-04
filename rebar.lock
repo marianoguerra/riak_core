@@ -21,7 +21,7 @@
  {<<"pbkdf2">>,{pkg,<<"pbkdf2">>,<<"2.0.0">>},0},
  {<<"poolboy">>,
   {git,"https://github.com/Kyorai/poolboy.git",
-       {ref,"12e463704087f827fa2dbc75998b6001aaca4b4f"}},
+       {ref,"a1f00f170c5ec3736b5430433f4055541d4fbdae"}},
   0},
  {<<"riak_ensemble">>,
   {git,"https://github.com/Kyorai/riak_ensemble.git",
