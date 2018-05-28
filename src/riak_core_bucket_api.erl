@@ -31,8 +31,7 @@ sup_children() ->
     [?CHILD(riak_core_metadata_evt_sup, supervisor),
      ?CHILD(riak_core_metadata_manager, worker),
      ?CHILD(riak_core_metadata_hashtree, worker),
-     ?CHILD(riak_core_broadcast, worker),
-     ?CHILD(riak_core_gossip, worker)].
+     ?CHILD(riak_core_broadcast, worker)].
 
 ring_changed(Node, CState) ->
     riak_core_claimant:ring_changed(Node, CState).

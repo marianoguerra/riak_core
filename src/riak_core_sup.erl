@@ -72,6 +72,7 @@ init([]) ->
                   ?CHILD(riak_core_node_watcher, worker),
                   ?CHILD(riak_core_vnode_manager, worker),
                   ?CHILD(riak_core_capability, worker),
+                  ?CHILD(riak_core_gossip, worker),
                   ?CHILD(riak_core_claimant, worker),
                   ?CHILD(riak_core_table_owner, worker),
                   [EnsembleSup || ensembles_enabled()],
