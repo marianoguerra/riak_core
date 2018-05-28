@@ -1435,7 +1435,7 @@ internal_ring_changed(Node, CState0) ->
         false ->
             CState;
         true ->
-            riak_core_claimant:ring_changed(Node, CState)
+            riak_core_bucket_api:ring_changed(Node, CState)
     end.
 
 %% @private

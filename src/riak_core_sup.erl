@@ -67,19 +67,15 @@ init([]) ->
                   ?CHILD(riak_core_handoff_sup, supervisor),
                   ?CHILD(riak_core_ring_events, worker),
                   ?CHILD(riak_core_ring_manager, worker),
-                  ?CHILD(riak_core_metadata_evt_sup, supervisor),
-                  ?CHILD(riak_core_metadata_manager, worker),
-                  ?CHILD(riak_core_metadata_hashtree, worker),
-                  ?CHILD(riak_core_broadcast, worker),
                   ?CHILD(riak_core_vnode_proxy_sup, supervisor),
                   ?CHILD(riak_core_node_watcher_events, worker),
                   ?CHILD(riak_core_node_watcher, worker),
                   ?CHILD(riak_core_vnode_manager, worker),
                   ?CHILD(riak_core_capability, worker),
-                  ?CHILD(riak_core_gossip, worker),
                   ?CHILD(riak_core_claimant, worker),
                   ?CHILD(riak_core_table_owner, worker),
-                  [EnsembleSup || ensembles_enabled()]
+                  [EnsembleSup || ensembles_enabled()],
+                  riak_core_bucket_api:sup_children()
                  ]),
 
     {ok, {{one_for_one, 10, 10}, Children}}.

@@ -39,7 +39,7 @@ start(_StartType, _StartArgs) ->
     maybe_delay_start(),
     ok = validate_ring_state_directory_exists(),
     ok = safe_register_cluster_info(),
-    ok = add_bucket_defaults(),
+    ok = riak_core_bucket_api:init(),
 
     start_riak_core_sup().
 
@@ -73,12 +73,6 @@ safe_register_cluster_info() ->
     %% Register our cluster_info app callback modules, with catch if
     %% the app is missing or packaging is broken.
     catch cluster_info:register_app(riak_core_cinfo_core),
-    ok.
-
-add_bucket_defaults() ->
-    %% add these defaults now to supplement the set that may have been
-    %% configured in app.config
-    riak_core_bucket:append_bucket_defaults(riak_core_bucket_type:defaults(default_type)),
     ok.
 
 start_riak_core_sup() ->

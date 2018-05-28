@@ -291,7 +291,9 @@ fold(It, Fun, Accum) ->
 %% and their properties
 -spec iterator() -> riak_core_metadata:iterator().
 iterator() ->
-    riak_core_claimant:bucket_type_iterator().
+    riak_core_metadata:iterator(?BUCKET_TYPE_PREFIX, [{default, undefined},
+                                                      {resolver, fun riak_core_bucket_props:resolve/2}]).
+
 
 %% @doc Advance the iterator to the next bucket type. itr_done/1 should always be called
 %% before this function

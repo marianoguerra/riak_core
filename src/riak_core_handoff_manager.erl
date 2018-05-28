@@ -439,7 +439,7 @@ resize_transfer_notsent_fun(Ring, Mod, Src) ->
         false -> NValMap = DefaultN = undefined;
         true ->
             NValMap = Mod:nval_map(Ring),
-            DefaultN = riak_core_bucket:default_object_nval()
+            DefaultN = riak_core_bucket_api:get_bucket_defaul_attr(n_val, 3)
     end,
     fun(Key, Acc) -> record_seen_index(Ring, Shrinking, NValMap, DefaultN, Mod, Src, Key, Acc) end.
 

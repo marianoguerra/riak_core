@@ -189,7 +189,7 @@ get_bucket_meta({<<"default">>, Name}) ->
 get_bucket_meta({_Type, _Name}=Bucket) ->
     %% reads from cluster metadata ets table
     %% these aren't stored in ring manager ever
-    riak_core_bucket:get_bucket(Bucket);
+    riak_core_bucket_api:get_bucket(Bucket);
 get_bucket_meta(Bucket) ->
     case ets:lookup(?ETS, {bucket, Bucket}) of
         [] ->
@@ -572,12 +572,12 @@ set_ring_global(Ring) ->
             Buckets = riak_core_ring:get_buckets(Ring),
             lists:foldl(
                 fun(Bucket, AccRing) ->
-                        BucketProps = riak_core_bucket:get_bucket(Bucket, Ring),
+                        BucketProps = riak_core_bucket_api:get_bucket(Bucket, Ring),
                         %% Merge anything in the default properties but not in
                         %% the bucket's properties. This is to ensure default
                         %% properties added after the bucket is created are
                         %% inherited to the bucket.
-                        MergedProps = riak_core_bucket:merge_props(
+                        MergedProps = riak_core_bucket_api:merge_props(
                             BucketProps, DefaultProps),
 
                         %% fixup the ring
